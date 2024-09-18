@@ -5,7 +5,7 @@ import { invokePassport } from "../middlewares/handlerError.js";
 const route = Router();
 
 route.post('/login', login)
-route.post('/register:', register)
+route.post('/register', register)
 
 route.get('/current', invokePassport('jwt'), (req, res) => {
   console.log("Usuario desde session.router ", req.user)

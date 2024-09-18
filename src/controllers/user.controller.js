@@ -10,11 +10,13 @@ export const login = async (req, res) => {
 
     if (isValidPassword(userFound, password)) {
       const token = generadorToken({ email: userFound.email, nombre: userFound.nombre, rol: userFound.rol })
-      return res.status(200).cookie('cookieUser', token, { maxAge: 60000, signed: true, httpOnly: true }).json({ message: 'login OK', token })
+      console.log("Usuario logueado: ", userFound, "Token ", token);
+
+      return res.status(200).cookie('currentUser', token, { maxAge: 60000, signed: true, httpOnly: true }).json({ message: 'login exitoso', userFound, token })
     }
-    return res.status(200).json({ message: 'error login' })
+    return res.status(400).json({ message: 'error login' })
   } catch (e) {
-    return res.json({ message: e })
+    return res.status(500).json({ message: "Error del servidor", e })
   }
 }
 
@@ -34,12 +36,12 @@ export const register = async (req, res) => {
       email,
       edad,
       password: createHash(password),
-      rol,
+      rol
     }
 
     const user = await UserModel.create(newUser);
-    return res.status(201).json({ message: "Usuario creado", user })//devuelve todos los datos de user
-    /* return res.status(201).json({ message: `Usuario creado: ${user.nombre}` }) //devuelve solo el nombre */
+    //return res.status(201).json({ message: "Usuario creado", user })//devuelve todos los datos de user
+    return res.status(201).json({ message: `Usuario creado: ${user.nombre}` }) //devuelve solo el nombre 
   } catch (e) {
     return res.status(500).json({ message: "Error de registro", e })
   }
